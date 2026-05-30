@@ -15,6 +15,7 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as VerifyIdRouteImport } from './routes/verify/$id'
 import { Route as AuthenticatedValidationsRouteImport } from './routes/_authenticated/validations'
 import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated/users'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedRequestsRouteImport } from './routes/_authenticated/requests'
 import { Route as AuthenticatedPollsRouteImport } from './routes/_authenticated/polls'
 import { Route as AuthenticatedMeetingsRouteImport } from './routes/_authenticated/meetings'
@@ -55,6 +56,11 @@ const AuthenticatedValidationsRoute =
 const AuthenticatedUsersRoute = AuthenticatedUsersRouteImport.update({
   id: '/users',
   path: '/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedRequestsRoute = AuthenticatedRequestsRouteImport.update({
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/meetings': typeof AuthenticatedMeetingsRoute
   '/polls': typeof AuthenticatedPollsRoute
   '/requests': typeof AuthenticatedRequestsRouteWithChildren
+  '/settings': typeof AuthenticatedSettingsRoute
   '/users': typeof AuthenticatedUsersRoute
   '/validations': typeof AuthenticatedValidationsRoute
   '/verify/$id': typeof VerifyIdRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/laws': typeof AuthenticatedLawsRoute
   '/meetings': typeof AuthenticatedMeetingsRoute
   '/polls': typeof AuthenticatedPollsRoute
+  '/settings': typeof AuthenticatedSettingsRoute
   '/users': typeof AuthenticatedUsersRoute
   '/validations': typeof AuthenticatedValidationsRoute
   '/verify/$id': typeof VerifyIdRoute
@@ -163,6 +171,7 @@ export interface FileRoutesById {
   '/_authenticated/meetings': typeof AuthenticatedMeetingsRoute
   '/_authenticated/polls': typeof AuthenticatedPollsRoute
   '/_authenticated/requests': typeof AuthenticatedRequestsRouteWithChildren
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/validations': typeof AuthenticatedValidationsRoute
   '/verify/$id': typeof VerifyIdRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/meetings'
     | '/polls'
     | '/requests'
+    | '/settings'
     | '/users'
     | '/validations'
     | '/verify/$id'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/laws'
     | '/meetings'
     | '/polls'
+    | '/settings'
     | '/users'
     | '/validations'
     | '/verify/$id'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/_authenticated/meetings'
     | '/_authenticated/polls'
     | '/_authenticated/requests'
+    | '/_authenticated/settings'
     | '/_authenticated/users'
     | '/_authenticated/validations'
     | '/verify/$id'
@@ -277,6 +289,13 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/users'
       preLoaderRoute: typeof AuthenticatedUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/requests': {
@@ -385,6 +404,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMeetingsRoute: typeof AuthenticatedMeetingsRoute
   AuthenticatedPollsRoute: typeof AuthenticatedPollsRoute
   AuthenticatedRequestsRoute: typeof AuthenticatedRequestsRouteWithChildren
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
   AuthenticatedValidationsRoute: typeof AuthenticatedValidationsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
@@ -399,6 +419,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMeetingsRoute: AuthenticatedMeetingsRoute,
   AuthenticatedPollsRoute: AuthenticatedPollsRoute,
   AuthenticatedRequestsRoute: AuthenticatedRequestsRouteWithChildren,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
   AuthenticatedValidationsRoute: AuthenticatedValidationsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,

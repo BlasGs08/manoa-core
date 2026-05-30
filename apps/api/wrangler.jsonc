@@ -108,12 +108,30 @@
           "migrations_dir": "./src/shared/database/migrations"
         }
       ],
-
+      "ai": {
+        "binding": "AI"
+      },
       "durable_objects": {
         "bindings": [
           {
             "name": "ChatAgent",
             "class_name": "ChatAgent"
+          }
+        ]
+      },
+      "queues": {
+        "producers": [
+          {
+            "queue": "manoa-laws-scrape",
+            "binding": "LAWS_SCRAPE_QUEUE"
+          }
+        ],
+        "consumers": [
+          {
+            "queue": "manoa-laws-scrape",
+            "max_batch_size": 1,
+            "max_batch_timeout": 30,
+            "max_retries": 2
           }
         ]
       },

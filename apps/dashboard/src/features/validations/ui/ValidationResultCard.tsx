@@ -6,6 +6,7 @@ import {
   Landmark,
   CheckCircle2,
   Hash,
+  DatabaseIcon,
 } from "lucide-react";
 
 interface ValidationResultCardProps {
@@ -42,7 +43,7 @@ export function ValidationResultCard({ data }: ValidationResultCardProps) {
         <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
           <CheckCircle2 className="h-6 w-6 text-primary" />
         </div>
-        <div>
+        <div className="flex-1 min-w-0">
           <p className="text-xs text-muted-foreground uppercase font-medium tracking-wider mb-0.5">
             Cédula Verificada
           </p>
@@ -50,6 +51,12 @@ export function ValidationResultCard({ data }: ValidationResultCardProps) {
             {data.fullname}
           </h2>
         </div>
+        {data.source === "census" && (
+          <div className="shrink-0 flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-600 dark:text-amber-400">
+            <DatabaseIcon className="h-3 w-3" />
+            Padrón comunal
+          </div>
+        )}
       </div>
 
       {/* Body */}

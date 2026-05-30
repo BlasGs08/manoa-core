@@ -26,3 +26,7 @@ src/routeTree.gen.ts
 # Lock
 *.lock
 *-lock.json
+
+# Graphify
+graphify-out/
+*.xls

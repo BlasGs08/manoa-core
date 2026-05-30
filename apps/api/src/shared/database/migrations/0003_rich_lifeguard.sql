@@ -1,4 +1,4 @@
-CREATE TABLE `document_requests` (
+CREATE TABLE IF NOT EXISTS `document_requests` (
 	`id` text PRIMARY KEY NOT NULL,
 	`type` text NOT NULL,
 	`status` text DEFAULT 'pending' NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE `document_requests` (
 	FOREIGN KEY (`reviewed_by`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE set null
 );
 --> statement-breakpoint
-CREATE TABLE `council_signatories` (
+CREATE TABLE IF NOT EXISTS `council_signatories` (
 	`id` text PRIMARY KEY NOT NULL,
 	`role` text NOT NULL,
 	`name` text DEFAULT '' NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE `council_signatories` (
 	`updated_at` integer DEFAULT (unixepoch())
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `council_signatories_role_unique` ON `council_signatories` (`role`);--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS `council_signatories_role_unique` ON `council_signatories` (`role`);--> statement-breakpoint
 PRAGMA foreign_keys=OFF;--> statement-breakpoint
 CREATE TABLE `__new_document_certifications` (
 	`id` text PRIMARY KEY NOT NULL,

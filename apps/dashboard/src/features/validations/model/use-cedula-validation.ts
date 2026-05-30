@@ -12,6 +12,7 @@ export interface CedulaData {
   parish: string;
   voting: string;
   address: string;
+  source?: "external" | "census";
 }
 
 interface SuccessResult {

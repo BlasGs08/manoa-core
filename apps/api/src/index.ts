@@ -24,6 +24,8 @@ import validationsRouter from './modules/validations/validations.router';
 import { signatoriesRouter } from './modules/signatories/signatories.router';
 import lawsRouter from './modules/laws/laws.router';
 import { scrapeAndStoreLaws } from './modules/laws/laws.scraper';
+import { settingsRouter } from './modules/settings';
+import { statsRouter } from './modules/stats';
 
 type Bindings = {
   DB: D1Database
@@ -37,6 +39,8 @@ type Bindings = {
     run: (model: string, input: unknown) => Promise<unknown>
   }
   AI_MODEL?: string
+  APP_CEDULA_ID?: string;
+  APP_CEDULA_TOKEN?: string;
   BETTER_AUTH_URL?: string;
   DASHBOARD_ORIGIN?: string;
   RESEND_FROM_EMAIL?: string;
@@ -338,7 +342,11 @@ const app = new Hono<HonoConfig>()
   .use('/validations/*', requireAuth)
   .route('/validations', validationsRouter)
   .use('/laws/scrape', requireAuth)
-  .route('/laws', lawsRouter);
+  .route('/laws', lawsRouter)
+  .use('/settings/*', requireAuth)
+  .route('/settings', settingsRouter)
+  .use('/stats/*', requireAuth)
+  .route('/stats', statsRouter);
 
 export { ChatAgent }
 

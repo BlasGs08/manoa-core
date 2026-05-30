@@ -7,3 +7,4 @@ export * from "./documents.schema";
 export * from "./requests.schema";
 export * from "./signatories.schema";
 export * from "./laws.schema";
+export * from "./settings.schema";

@@ -8,7 +8,7 @@
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "db:studio": "npx drizzle-kit studio",
     "db:generate": "npx drizzle-kit generate",
-    "db:push:local": "npx wrangler d1 migrations apply sigcc-manoa-db --local",
+    "db:push:local": "npx wrangler d1 migrations apply manoa-db-local --local --env local",
     "db:push:remote": "wrangler d1 migrations apply sigcc-manoa-db --remote",
     "secrets:store:list": "wrangler secrets-store store list --remote",
     "secrets:store:create": "wrangler secrets-store store create manoa-core --remote",
@@ -18,7 +18,8 @@
     "secret:push:local": "echo 'DEPRECATED: usa Secrets Store local. Ejemplo: npm run secrets:secret:create:local -- <STORE_ID> --name BETTER_AUTH_SECRET --scopes workers' && exit 1",
     "secret:push:production": "echo 'DEPRECATED: usa Secrets Store remoto. Ejemplo: npm run secrets:secret:create:remote -- <STORE_ID> --name BETTER_AUTH_SECRET --scopes workers' && exit 1",
     "auth:bootstrap": "node ./scripts/bootstrap-user.mjs",
-    "seed": "tsx ./scripts/seed-super-admin.ts"
+    "seed": "tsx ./scripts/seed-super-admin.ts",
+    "seed:census": "tsx ./scripts/seed-census.ts"
   },
   "dependencies": {
     "@cloudflare/ai-chat": "^0.1.8",
