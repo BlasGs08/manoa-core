@@ -12,10 +12,8 @@ export type Bindings = {
   BETTER_AUTH_SECRET: string;
   BETTER_AUTH_URL?: string;
   DASHBOARD_ORIGIN?: string;
-  TURNSTILE_SECRET_KEY?: string;
   RESEND_API_KEY?: string;
   RESEND_FROM_EMAIL?: string;
-  BOOTSTRAP_ADMIN_KEY?: string;
 };
 
 export type Variables = {

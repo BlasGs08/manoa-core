@@ -9,7 +9,7 @@
     "nodejs_compat"
   ],
   "observability": {
-    "enabled": false,
+    "enabled": true,
     "head_sampling_rate": 1,
     "logs": {
       "enabled": true,
@@ -23,22 +23,6 @@
       "head_sampling_rate": 1
     }
   },
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_sqlite_classes": [
-        "ChatAgent"
-      ]
-    }
-  ],
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "manoa-db-prod",
-      "database_id": "566bd30a-2219-49a3-b0e4-0e266bf9198d",
-      "migrations_dir": "./src/shared/database/migrations"
-    }
-  ],
   "ai": {
     "binding": "AI"
   },
@@ -50,43 +34,16 @@
       }
     ]
   },
-  "secrets_store_secrets": [
-    {
-      "binding": "BETTER_AUTH_SECRET",
-      "store_id": "f10e20552f8b4e8a894e81177562be2c",
-      "secret_name": "BETTER_AUTH_SECRET"
-    },
-    {
-      "binding": "RESEND_API_KEY",
-      "store_id": "f10e20552f8b4e8a894e81177562be2c",
-      "secret_name": "RESEND_API_KEY"
-    },
-    {
-      "binding": "TURNSTILE_SECRET_KEY",
-      "store_id": "f10e20552f8b4e8a894e81177562be2c",
-      "secret_name": "TURNSTILE_SECRET_KEY"
-    },
-    {
-      "binding": "CF_ACCOUNT_ID",
-      "store_id": "f10e20552f8b4e8a894e81177562be2c",
-      "secret_name": "CF_ACCOUNT_ID"
-    },
-    {
-      "binding": "CF_BR_API_TOKEN",
-      "store_id": "f10e20552f8b4e8a894e81177562be2c",
-      "secret_name": "CF_BR_API_TOKEN"
-    }
-  ],
   "queues": {
     "producers": [
       {
-        "queue": "manoa-laws-scrape",
+        "queue": "manoa-laws-scrape-prod",
         "binding": "LAWS_SCRAPE_QUEUE"
       }
     ],
     "consumers": [
       {
-        "queue": "manoa-laws-scrape",
+        "queue": "manoa-laws-scrape-prod",
         "max_batch_size": 1,
         "max_batch_timeout": 30,
         "max_retries": 2
@@ -94,17 +51,27 @@
     ]
   },
   "vars": {
-    "BETTER_AUTH_URL": "https://manoa-api.manoa-it.workers.dev",
+    "BETTER_AUTH_URL": "https://manoa-api-prod.manoa-it.workers.dev",
     "DASHBOARD_ORIGIN": "https://manoa-backoffice.pages.dev",
-    "RESEND_FROM_EMAIL": "onboarding@resend.dev"
+    "RESEND_FROM_EMAIL": "onboarding@resend.dev",
+    "ENVIRONMENT": "production"
   },
   "env": {
-    "local": {
+    "dev": {
+      "name": "manoa-api-dev",
+      "migrations": [
+        {
+          "tag": "v1",
+          "new_sqlite_classes": [
+            "ChatAgent"
+          ]
+        }
+      ],
       "d1_databases": [
         {
           "binding": "DB",
-          "database_name": "manoa-db-local",
-          "database_id": "33a57dfd-bfb5-49be-a19b-f231a8bc91d2",
+          "database_name": "manoa-db-master-dev",
+          "database_id": "5a300164-7c77-432f-81b4-fa028e39d9fc",
           "migrations_dir": "./src/shared/database/migrations"
         }
       ],
@@ -122,13 +89,13 @@
       "queues": {
         "producers": [
           {
-            "queue": "manoa-laws-scrape",
+            "queue": "manoa-laws-scrape-dev",
             "binding": "LAWS_SCRAPE_QUEUE"
           }
         ],
         "consumers": [
           {
-            "queue": "manoa-laws-scrape",
+            "queue": "manoa-laws-scrape-dev",
             "max_batch_size": 1,
             "max_batch_timeout": 30,
             "max_retries": 2
@@ -136,9 +103,96 @@
         ]
       },
       "vars": {
-        "BETTER_AUTH_URL": "http://localhost:8787",
-        "DASHBOARD_ORIGIN": "http://localhost:3000",
-        "RESEND_FROM_EMAIL": "onboarding@resend.dev"
+        "BETTER_AUTH_URL": "https://manoa-api-dev.manoa-it.workers.dev",
+        "DASHBOARD_ORIGIN": "https://manoa-backoffice-dev.pages.dev",
+        "RESEND_FROM_EMAIL": "onboarding@resend.dev",
+        "ENVIRONMENT": "development"
+      }
+    },
+    "prod": {
+      "name": "manoa-api-prod",
+      "migrations": [
+        {
+          "tag": "v1",
+          "new_sqlite_classes": [
+            "ChatAgent"
+          ]
+        }
+      ],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "manoa-db-master-prod",
+          "database_id": "75d3724e-3718-4864-a859-e5ccebaa3be8",
+          "migrations_dir": "./src/shared/database/migrations"
+        }
+      ],
+      "ai": {
+        "binding": "AI"
+      },
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "ChatAgent",
+            "class_name": "ChatAgent"
+          }
+        ]
+      },
+      "queues": {
+        "producers": [
+          {
+            "queue": "manoa-laws-scrape-prod",
+            "binding": "LAWS_SCRAPE_QUEUE"
+          }
+        ],
+        "consumers": [
+          {
+            "queue": "manoa-laws-scrape-prod",
+            "max_batch_size": 1,
+            "max_batch_timeout": 30,
+            "max_retries": 2
+          }
+        ]
+      },
+      "vars": {
+        "BETTER_AUTH_URL": "https://manoa-api-prod.manoa-it.workers.dev",
+        "DASHBOARD_ORIGIN": "https://manoa-backoffice.pages.dev",
+        "RESEND_FROM_EMAIL": "onboarding@resend.dev",
+        "ENVIRONMENT": "production"
+      }
+    },
+    "ai-dev": {
+      "name": "manoa-ai-dev",
+      "main": "src/ai/index.ts",
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "manoa-db-master-dev",
+          "database_id": "5a300164-7c77-432f-81b4-fa028e39d9fc"
+        }
+      ],
+      "ai": {
+        "binding": "AI"
+      },
+      "vars": {
+        "ENVIRONMENT": "development"
+      }
+    },
+    "ai-prod": {
+      "name": "manoa-ai-prod",
+      "main": "src/ai/index.ts",
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "manoa-db-master-prod",
+          "database_id": "75d3724e-3718-4864-a859-e5ccebaa3be8"
+        }
+      ],
+      "ai": {
+        "binding": "AI"
+      },
+      "vars": {
+        "ENVIRONMENT": "production"
       }
     }
   }

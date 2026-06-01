@@ -2,24 +2,32 @@
   "name": "api",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev --env local",
-    "dev:remote": "wrangler dev --remote --env local",
-    "deploy": "wrangler deploy --minify --env=\"\"",
+    "dev": "wrangler dev --remote --env dev",
+    "dev:remote": "wrangler dev --remote --env dev",
+    "deploy:dev": "wrangler deploy --env dev --secrets-file .dev.vars.dev",
+    "deploy:prod": "wrangler deploy --env prod --secrets-file .dev.vars.prod",
+    "deploy": "wrangler deploy --env prod --minify --secrets-file .dev.vars.prod",
+    "deploy:ai:dev": "wrangler deploy --env ai-dev --secrets-file .dev.vars.dev",
+    "deploy:ai:prod": "wrangler deploy --env ai-prod --secrets-file .dev.vars.prod",
+    "dev:ai": "wrangler dev --env ai-dev",
+    "dev:ai:remote": "wrangler dev --remote --env ai-dev",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "db:studio": "npx drizzle-kit studio",
     "db:generate": "npx drizzle-kit generate",
-    "db:push:local": "npx wrangler d1 migrations apply manoa-db-local --local --env local",
-    "db:push:remote": "wrangler d1 migrations apply sigcc-manoa-db --remote",
+    "db:push:dev": "wrangler d1 migrations apply manoa-db-master-dev --env dev",
+    "db:push:prod": "wrangler d1 migrations apply manoa-db-master-prod --env prod",
+    "db:push": "wrangler d1 migrations apply manoa-db-master-prod --env prod",
     "secrets:store:list": "wrangler secrets-store store list --remote",
-    "secrets:store:create": "wrangler secrets-store store create manoa-core --remote",
-    "secrets:secret:create:local": "wrangler secrets-store secret create",
-    "secrets:secret:create:remote": "wrangler secrets-store secret create --remote",
-    "secret:push": "echo 'DEPRECATED: usa Secrets Store. Ejemplo: npm run secrets:secret:create:remote -- <STORE_ID> --name BETTER_AUTH_SECRET --scopes workers' && exit 1",
-    "secret:push:local": "echo 'DEPRECATED: usa Secrets Store local. Ejemplo: npm run secrets:secret:create:local -- <STORE_ID> --name BETTER_AUTH_SECRET --scopes workers' && exit 1",
-    "secret:push:production": "echo 'DEPRECATED: usa Secrets Store remoto. Ejemplo: npm run secrets:secret:create:remote -- <STORE_ID> --name BETTER_AUTH_SECRET --scopes workers' && exit 1",
+    "secrets:store:create:dev": "wrangler secrets-store store create manoa-core-dev --remote",
+    "secrets:store:create:prod": "wrangler secrets-store store create manoa-core-prod --remote",
+    "secrets:store:create": "wrangler secrets-store store create manoa-core-prod --remote",
+    "secrets:set": "wrangler secret put",
+    "secrets:set:dev": "wrangler secret put --env dev",
+    "secrets:set:prod": "wrangler secret put --env prod",
     "auth:bootstrap": "node ./scripts/bootstrap-user.mjs",
     "seed": "tsx ./scripts/seed-super-admin.ts",
-    "seed:census": "tsx ./scripts/seed-census.ts"
+    "seed:census": "tsx ./scripts/seed-census.ts",
+    "admin:create": "node ./scripts/create-admin.mjs"
   },
   "dependencies": {
     "@cloudflare/ai-chat": "^0.1.8",
@@ -31,6 +39,7 @@
     "dayjs": "^1.11.19",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.12.0",
+    "kysely": "0.27.0",
     "papaparse": "^5.5.3",
     "pdf-lib": "^1.17.1",
     "unpdf": "^1.4.0",
@@ -46,5 +55,9 @@
     "tsx": "^4.19.2",
     "vite-tsconfig-paths": "^6.0.5",
     "wrangler": "^4.67.0"
+  },
+  "overrides": {
+    "**/kysely": "0.27.0",
+    "**/@better-auth/kysely-adapter/kysely": "0.27.0"
   }
 }

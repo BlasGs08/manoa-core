@@ -30,3 +30,9 @@ src/routeTree.gen.ts
 # Graphify
 graphify-out/
 *.xls
+
+# Opencode
+*.opencode
+
+# Temp
+*.tmp

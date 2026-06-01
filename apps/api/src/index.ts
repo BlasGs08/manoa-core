@@ -30,9 +30,7 @@ import { statsRouter } from './modules/stats';
 type Bindings = {
   DB: D1Database
   BETTER_AUTH_SECRET: string | { get: () => Promise<string> };
-  TURNSTILE_SECRET_KEY?: string | { get: () => Promise<string> };
   RESEND_API_KEY?: string | { get: () => Promise<string> };
-  BOOTSTRAP_ADMIN_KEY?: string | { get: () => Promise<string> };
   CF_ACCOUNT_ID: string | { get: () => Promise<string> };
   CF_BR_API_TOKEN: string | { get: () => Promise<string> };
   AI?: {
@@ -55,8 +53,6 @@ type LawsScrapeMessage = {
 type RuntimeSecrets = {
   betterAuthSecret: string
   resendApiKey?: string
-  turnstileSecret?: string
-  bootstrapAdminKey?: string
 }
 
 type Variables = {
@@ -134,8 +130,6 @@ const resolveRuntimeSecrets = (env: Bindings) => {
   const resolver = (async () => {
     const betterAuthSecret = await resolveSecret(env.BETTER_AUTH_SECRET);
     const resendApiKey = await resolveSecret(env.RESEND_API_KEY);
-    const turnstileSecret = await resolveSecret(env.TURNSTILE_SECRET_KEY);
-    const bootstrapAdminKey = await resolveSecret(env.BOOTSTRAP_ADMIN_KEY);
 
     const missingRequired: string[] = [];
 
@@ -150,30 +144,12 @@ const resolveRuntimeSecrets = (env: Bindings) => {
     return {
       betterAuthSecret,
       resendApiKey,
-      turnstileSecret,
-      bootstrapAdminKey,
     };
   })();
 
   runtimeSecretsCache.set(env, resolver);
   return resolver;
 };
-
-// TURNSTILE DESACTIVADO TEMPORALMENTE
-// const verifyTurnstileToken = async (
-//   secret: string,
-//   token: string,
-//   remoteIp?: string,
-// ) => {
-//   const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-//     method: "POST",
-//     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-//     body: new URLSearchParams({ secret, response: token, remoteip: remoteIp ?? "" }),
-//   });
-//   if (!response.ok) return false;
-//   const data = await response.json<{ success?: boolean }>();
-//   return Boolean(data.success);
-// };
 
 const requireAuth: MiddlewareHandler<HonoConfig> = async (c, next) => {
   const auth = c.get("auth");
@@ -210,7 +186,7 @@ const app = new Hono<HonoConfig>()
   .use('*', async (c, next) => {
     const db = drizzle(c.env.DB, { schema });
     const dashboardOrigin = c.env.DASHBOARD_ORIGIN ?? DEFAULT_DASHBOARD_ORIGIN;
-    const requestOrigin = new URL(c.req.url).origin;
+    const requestOrigin = c.req.header("Origin") ?? new URL(c.req.url).origin;
     let runtimeSecrets: RuntimeSecrets;
 
     try {
@@ -241,65 +217,12 @@ const app = new Hono<HonoConfig>()
 
     await next();
   })
-  .use('/auth/sign-in/email', async (_c, next) => {
-    // TURNSTILE DESACTIVADO TEMPORALMENTE
-    await next();
-
-    // if (c.req.method !== "POST") {
-    //   await next();
-    //   return;
-    // }
-
-    // const { turnstileSecret } = c.get("runtimeSecrets");
-
-    // if (!turnstileSecret) {
-    //   await next();
-    //   return;
-    // }
-
-    // const turnstileToken = c.req.header("X-Turnstile-Token");
-
-    // if (!turnstileToken) {
-    //   return c.json({ message: "Captcha requerido" }, 400);
-    // }
-
-    // const isValid = await verifyTurnstileToken(
-    //   turnstileSecret,
-    //   turnstileToken,
-    //   c.req.header("CF-Connecting-IP"),
-    // );
-
-    // if (!isValid) {
-    //   return c.json({ message: "Captcha inválido" }, 400);
-    // }
-
-    // await next();
-  })
   .use('/auth/sign-up/email', async (c, next) => {
     if (c.req.method !== "POST") {
       await next();
       return;
     }
-
-    const db = c.get("db");
-    const [result] = await db.select({ total: count() }).from(schema.user);
-
-    if ((result?.total ?? 0) > 0) {
-      return c.json({ message: "Registro público deshabilitado" }, 403);
-    }
-
-    const { bootstrapAdminKey: bootstrapKey } = c.get("runtimeSecrets");
-
-    if (!bootstrapKey) {
-      return c.json({ message: "Bootstrap no configurado" }, 503);
-    }
-
-    const requestBootstrapKey = c.req.header("X-Bootstrap-Key");
-
-    if (!requestBootstrapKey || requestBootstrapKey !== bootstrapKey) {
-      return c.json({ message: "Clave de bootstrap inválida" }, 401);
-    }
-
+    // Allow public sign-up for POST (admin creation handled via CLI script)
     await next();
   })
   .on(["GET", "POST", "OPTIONS"], '/auth/*', async (c) => {

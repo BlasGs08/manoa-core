@@ -8,14 +8,14 @@ const resolvedApiOrigin = env.VITE_API_ORIGIN || new URL(defaultApiUrl).origin;
 
 export const authClient = createAuthClient({
 	baseURL: resolvedApiOrigin,
-	plugins: [
-		adminClient({
-			ac,
-			roles: {
-				admin,
-				user,
-				superadmin,
-			},
-		}),
-	],
+  plugins: [
+    adminClient({
+      ac,
+      roles: {
+        admin,
+        user,
+        superadmin,
+      },
+    }),
+  ],
 });
